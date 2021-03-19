@@ -11,7 +11,7 @@
     {
       "matches": ["*://*/*"],
       "css": [],
-      "js": ["init.js"]
+      "js": ["init.js, jquery.min.js"]
     }
   ],
   "icons": {
