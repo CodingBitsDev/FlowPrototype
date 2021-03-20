@@ -12,7 +12,7 @@
     {
       "matches": ["*://*/*"],
       "css": [],
-      "js": ["init.js", "jquery.min.js"]
+      "js": ["min/jquery.min.js", "min/firebase.js", "min/react.js", "min/babel.min.js", "min/reactDom.js", "init.js", "flowAPI/overlay.js", "flowAPI/flowState.js"]
     }
   ],
   "icons": {
