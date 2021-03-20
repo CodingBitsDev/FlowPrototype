@@ -1,11 +1,13 @@
 (function(){
     document.body.addEventListener('click',(e) => {
-        if (e && e.path){
-            let path = e.path;
-            let smallestClicked = path[0];
-
-            let elem = findElementByString(smallestClicked.outerHTML)
+        console.log
+        let clickedElement = null
+        if (e && e.path) clickedElement = e.path[0];
+        else if (e.originalTarget) clickedElement = e.originalTarget
+        if (clickedElement){
+            let elem = findElementByString(clickedElement.outerHTML)
             if (elem){
+                console.log(elem)
                 elem.style.borderColor = "red"
                 elem.style.borderWidth = "2px"
                 elem.style.borderStyle = "solid"
