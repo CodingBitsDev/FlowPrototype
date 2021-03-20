@@ -28,12 +28,13 @@ function onDocumentReady(cb){
 }
 
 function App(props){
+    let hasScrollBar = document.body.scrollHeight > window.innerHeight
     return React.createElement(
         'div',
         { style: {
             position: "absolute",
             top: "20%",
-            right: "20px",
+            right: hasScrollBar ? "17px" : "0px",
             width: "50px",
             height: "50px",
             backgroundColor: "blue",
