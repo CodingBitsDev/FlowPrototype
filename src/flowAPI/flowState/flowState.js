@@ -1,3 +1,4 @@
+import mergePersistandState from "./mergePersistantData.js";
 let flowState = {};
 
 let defaultState = {
@@ -16,8 +17,7 @@ let stateQueue = [];
 function _initState(){
     // Read it using the storage API
     chrome.storage.sync.get(['flowState'], function({ flowState: loadedState }) {
-        flowState = {...defaultState, ...loadedState}
-        console.log("### Loaded FLOWSTATE", loadedState)
+        flowState = mergePersistandState(defaultState, loadedState)
         setState({ loaded:true })
     });
 }
