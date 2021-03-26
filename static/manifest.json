@@ -15,6 +15,7 @@
       "js": ["index.js"]
     }
   ],
+  "background": { "scripts": ["hot-reload.js"] },
   "icons": {
     "16": "logo192.png",
     "48": "logo192.png",

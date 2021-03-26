@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { flowAPI } from "../main.js";
+import App from "./App.jsx"
 
 export function initOverlay(){
     let flowMain = document.createElement("div");
@@ -18,22 +19,4 @@ export function initOverlay(){
 
     document.body.prepend(flowMain);
     ReactDOM.render(App(), flowMain)
-}
-
-function App(props){
-    let hasScrollBar = document.body.scrollHeight > window.innerHeight
-    return ( 
-        <div 
-            style={{
-            position: "absolute",
-            top: "20%",
-            right: hasScrollBar ? "17px" : "0px",
-            width: "50px",
-            height: "50px",
-            backgroundColor: "blue",
-            pointerEvents: "auto", }}
-        >
-          FLOW 
-        </div>
-    )
 }
