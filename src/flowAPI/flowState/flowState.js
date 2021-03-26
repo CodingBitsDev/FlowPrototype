@@ -1,34 +1,46 @@
-let flowState = {
+let flowState = {};
+
+let defaultState = {
     mainState: 0,
     currenStep: 0,  
     clickData: [],
+    testCount: 0,
+    loaded: false,
 }
 
 let stateListeners = new Map()
 
-let queueActive = true;
+let queueActive = false;
 let stateQueue = [];
 
 function _initState(){
-   //Laoad state from storage with key of page 
+    // Read it using the storage API
+    chrome.storage.sync.get(['flowState'], function({ flowState: loadedState }) {
+        flowState = {...defaultState, ...loadedState}
+        console.log("### Loaded FLOWSTATE", loadedState)
+        setState({ loaded:true })
+    });
 }
 
 function _saveState(newState){
     flowState = newState;
+    chrome.storage.sync.set({ flowState }, function() { 
+        console.log("newStateSaved", flowState)
+    });
    //Save state to storage with key of page
 }
 
 function _updateState(){
     queueActive = true;
     while (stateQueue.length > 0){
-        let stateData = stateQueue.unshift();
+        let stateData = stateQueue.shift();
         //Notify State Listener 
         let traverseKeys = (stateData, keyPath = "") => {
             Object.keys(stateData).forEach( key => {
-                let currentKeyPath = keyPath + !keyPath ? "" : "." + key
-                let value = stateData[key]
-                stateListeners.get(currentKeyPath).forEach( (listener) => {
-                    listener.cb(flowState, stateData);
+                let currentKeyPath = keyPath + (!keyPath ? "" : "." ) + key
+                let value = stateData[key];
+                ( stateListeners.get(currentKeyPath) || [] ).forEach( (listener) => {
+                    listener.cb(stateData, flowState);
                 })
                 if (typeof value === 'object' && value !== null){
                     traverseKeys(value, currentKeyPath);
@@ -50,7 +62,7 @@ function setState( stateData ){
 function addStateListener( stateVarString, cb, id = "" ){
     let currentListeners = stateListeners.get(stateVarString) || [];
     currentListeners.push({ cb, id})
-    stateListeners.set(currentListeners);
+    stateListeners.set(stateVarString, currentListeners);
 }
 
 function removeListener( stateVarString, cb, id  ){
@@ -68,12 +80,13 @@ function removeListener( stateVarString, cb, id  ){
 }
 
 function getState(stateString = ""){
+    if (stateString == "") return flowState;
     let stateArray = stateString.split(".");
-    let result = null;
+    let result = flowState;
     for (let index = 0; index < stateArray.length; index++) {
         const stateKey = stateArray[index];
-        if (flowState[stateKey]) return null;
-        result = flowState[stateKey]
+        if (!result[stateKey]) return null;
+        result = result[stateKey]
     }
     return result;
 }

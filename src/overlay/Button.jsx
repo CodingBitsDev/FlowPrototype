@@ -1,6 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
+import { flowAPI } from "../main.js"
 
 export default function (props){
+    const [count, setCount] = useState(flowAPI.state.getState("testCount") || 0);
+
+    flowAPI.state.addStateListener("testCount", (change, prev) => {
+        setCount(change.testCount)
+    }, "ButtonListener")
+
+    let onClick = (e) => {
+        console.log(flowAPI.state.getState("testCount"))
+        flowAPI.state.setState({testCount: flowAPI.state.getState("testCount") +1})
+    }
     return ( 
         <div 
             style={{
@@ -16,9 +27,11 @@ export default function (props){
                 alignItems: "center",
                 justifyContent: "center",
                 fontWeight: "bold",
+                cursor: "pointer",
             }}
+            onClick={onClick}
         >
-          FLOW 
+          {count}
         </div>
     )
 }

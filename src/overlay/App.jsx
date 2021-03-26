@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "./Button";
+import { flowAPI } from "../main.js"
 
 export default function App(props){
     let hasScrollBar = document.body.scrollHeight > window.innerHeight
@@ -15,7 +16,34 @@ export default function App(props){
             height: "100%",
             pointerEvents: "none", }}
         >
-            <Button hasScrollBar/>
+            <StoreLoader>
+                <Button hasScrollBar/>
+            </StoreLoader>
         </div>
     )
+}
+
+function StoreLoader ( {children} ) {
+    const [storeReady, setStoreReady] = useState(flowAPI.state.getState("loaded") || false);
+
+    useEffect(() => {
+        let ready = flowAPI.state.getState("loaded") || false;
+
+        if (storeReady != ready ) setStoreReady(ready)
+        else {
+            flowAPI.state.addStateListener("loaded", (change, prev) => {
+                setStoreReady(change.loaded)
+                // flowAPI.state.removeListener("loaded", null, "storeLoadedListener" )
+            }, "storeLoadedListener")
+
+            // return () => flowAPI.state.removeListener("loaded", null, "storeLoadedListener")
+        }
+    }, [])
+
+    if (!storeReady){
+        return null;
+    } else {
+        return (<React.Fragment children={children}></React.Fragment>)
+    }
+
 }

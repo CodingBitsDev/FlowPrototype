@@ -1,8 +1,8 @@
 import $ from "jquery"
-import { initOverlay } from "./overlay/overlay.js";
 import flowAPI from "./flowAPI/flowAPI.js";
 
 export {default as flowAPI} from "./flowAPI/flowAPI.js";
+import { initOverlay } from "./overlay/overlay.js";
 
 (function(){
     initOverlay();
