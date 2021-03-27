@@ -36,7 +36,7 @@ export function endLearning(){
 export function teachSkill(skillID){
     let skill = trackingState.savedSkills[skillID]
     if (!skill) return false;
-    flowAPI.state.setState({ mainState: 1, clickData: skill.clickData, currentStep: 1 });
+    flowAPI.state.setState({ mainState: 2, clickData: skill.clickData, currentStep: 1 });
     window.location.replace( skill.location );
     let currentElement = flowAPI.highlighter.highlightElementByString( skill.clickData[0] );
 
