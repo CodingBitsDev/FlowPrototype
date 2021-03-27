@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import { flowAPI } from "../main.js"
+import useFlowState from "./hooks/useFlowState.js";
 
 export default function App(props){
     let hasScrollBar = document.body.scrollHeight > window.innerHeight
@@ -24,21 +25,25 @@ export default function App(props){
 }
 
 function StoreLoader ( {children} ) {
-    const [storeReady, setStoreReady] = useState(flowAPI.state.getState("loaded") || false);
+    // const [storeReady, setStoreReady] = useState(flowAPI.state.getState("loaded") || false);
+
+    // useEffect(() => {
+    //     let ready = flowAPI.state.getState("loaded") || false;
+
+    //     if (storeReady != ready ) setStoreReady(ready)
+    //     else {
+    //         flowAPI.state.addStateListener("loaded", (change, prev) => {
+    //             setStoreReady(change.loaded)
+    //             // flowAPI.state.removeListener("loaded", null, "storeLoadedListener" )
+    //         }, "storeLoadedListener")
+    //         // return () => flowAPI.state.removeListener("loaded", null, "storeLoadedListener")
+    //     }
+    // }, [])
+    const [storeReady, setStoreReady] = useFlowState("loaded", false);
 
     useEffect(() => {
-        let ready = flowAPI.state.getState("loaded") || false;
-
-        if (storeReady != ready ) setStoreReady(ready)
-        else {
-            flowAPI.state.addStateListener("loaded", (change, prev) => {
-                setStoreReady(change.loaded)
-                // flowAPI.state.removeListener("loaded", null, "storeLoadedListener" )
-            }, "storeLoadedListener")
-
-            // return () => flowAPI.state.removeListener("loaded", null, "storeLoadedListener")
-        }
-    }, [])
+        console.log("###", storeReady);
+    }) 
 
     if (!storeReady){
         return null;

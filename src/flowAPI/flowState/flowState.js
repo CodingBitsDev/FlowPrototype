@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import mergePersistandState from "./mergePersistantData.js";
 let flowState = {};
 
@@ -22,13 +23,26 @@ function _initState(){
     });
 }
 
-function _saveState(newState){
-    flowState = newState;
+
+let safeFunc = debounce(( newState ) => {
     chrome.storage.sync.set({ flowState }, function() { 
-        console.log("newStateSaved", flowState)
+        // console.log("newStateSaved", flowState)
     });
-   //Save state to storage with key of page
+}, 200)
+function _saveState(newState, immediate){
+    flowState = newState;
+    if (immediate){
+        chrome.storage.sync.set({ flowState }, function() { 
+            // console.log("newStateSaved", flowState)
+        });
+    } else {
+        safeFunc();
+    }
 }
+window.onbeforeunload = function(){
+  _saveState(flowState, true);
+};
+
 
 function _updateState(){
     queueActive = true;
@@ -59,10 +73,13 @@ function setState( stateData ){
     if( !queueActive ) _updateState();
 }
 
-function addStateListener( stateVarString, cb, id = "" ){
+function addStateListener( stateVarString, cb, id = "", updateImmediatly = false ){
     let currentListeners = stateListeners.get(stateVarString) || [];
     currentListeners.push({ cb, id})
     stateListeners.set(stateVarString, currentListeners);
+    if (updateImmediatly){
+        cb(flowState, flowState);
+    }
 }
 
 function removeListener( stateVarString, cb, id  ){

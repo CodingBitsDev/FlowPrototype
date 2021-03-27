@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { flowAPI } from "../main.js"
+import useFlowState from "./hooks/useFlowState.js";
 
 export default function (props){
-    const [count, setCount] = useState(flowAPI.state.getState("testCount") || 0);
-
-    flowAPI.state.addStateListener("testCount", (change, prev) => {
-        setCount(change.testCount)
-    }, "ButtonListener")
+    const [count, setCount] = useFlowState("testCount", 0);
 
     let onClick = (e) => {
-        console.log(flowAPI.state.getState("testCount"))
-        flowAPI.state.setState({testCount: flowAPI.state.getState("testCount") +1})
+        setCount(count +1);
     }
+
     return ( 
         <div 
             style={{
