@@ -5,10 +5,10 @@ let flowState = {};
 
 let defaultState = {
     mainState: 0,
-    currenStep: 0,  
+    currentStep: 0,  
     clickData: [],
-    testCount: 0,
     loaded: false,
+    savedSkills = {}
 }
 
 let stateListeners = new Map()

@@ -20,11 +20,19 @@ export function removeTrackingListener(cb, id){
 
 document.body.addEventListener('click',(e) => {
     let clickedElement = null
+    let preventClick = false;
     if (e && e.path) clickedElement = e.path[0];
     else if (e.originalTarget) clickedElement = e.originalTarget
     if (clickedElement){
         trackingListeners.forEach( ( {cb} ) => {
-            cb(clickedElement, clickedElement.outerHTML);
+            let result = cb(clickedElement, clickedElement.outerHTML);
+            if (result == true){
+                preventClick == true;
+            }
         })
     }
+    if (preventClick){
+        //Prevent Click TODO
+    }
+
 }, true); 

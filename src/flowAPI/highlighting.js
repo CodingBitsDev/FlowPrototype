@@ -26,6 +26,7 @@ export function highlightElementByString( elemString){
         elem.style.borderColor = "red"
         elem.style.borderWidth = "2px"
         elem.style.borderStyle = "solid"
-    }
-
+        return elem;
+    } 
+    return null;
 }
