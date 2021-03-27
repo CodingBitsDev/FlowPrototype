@@ -1,3 +1,4 @@
+import { saveSate } from "./saveState.js";
 import { debounce } from 'lodash';
 import mergePersistandState from "./mergePersistantData.js";
 let flowState = {};
@@ -24,25 +25,10 @@ function _initState(){
 }
 
 
-let safeFunc = debounce(( newState ) => {
-    chrome.storage.sync.set({ flowState }, function() { 
-        // console.log("newStateSaved", flowState)
-    });
-}, 200)
-function _saveState(newState, immediate){
+function _saveState(newState){
     flowState = newState;
-    if (immediate){
-        chrome.storage.sync.set({ flowState }, function() { 
-            // console.log("newStateSaved", flowState)
-        });
-    } else {
-        safeFunc();
-    }
+    saveSate(flowState)
 }
-window.onbeforeunload = function(){
-  _saveState(flowState, true);
-};
-
 
 function _updateState(){
     queueActive = true;
