@@ -12,11 +12,11 @@ let safeFunc = debounce(() => {
 }, 200)
 
 window.onbeforeunload = function(){
-  _saveState(flowState, true);
+  saveState(flowState, true);
 };
 
-export function saveSate(newState, immediate){
-    flowState = filterSavedState(flowState);
+export function saveState(newState, immediate){
+    flowState = filterSavedState(newState);
     if (immediate){
         chrome.storage.sync.set({ flowState }, function() { 
         });

@@ -23,12 +23,9 @@ export default function useFlowState(pathString, defaultValue) {
 
         flowAPI.state.addStateListener(pathString, (change, prev) => {
             let newValue = getValueFromPathString(pathString, change)
-            if (newValue != flowStateValue){
-                setFlowStateValue(newValue)
-            }
-            return flowAPI.state.removeListener(pathString, null, randomKey)
+            setFlowStateValue(newValue)
         }, randomKey)
-        return () => flowAPI.state.removeListener(pathString, null, randomKey)
+        return () => { flowAPI.state.removeListener(pathString, null, randomKey) }
     }, [])
 
     let setFlowState = (newValue) => {

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Button from "./Button";
+import Button from "./Button/Button";
+import Menu from "./Menu/Menu";
 import { flowAPI } from "../main.js"
 import useFlowState from "./hooks/useFlowState.js";
 
 export default function App(props){
-    let hasScrollBar = document.body.scrollHeight > window.innerHeight
+
     return ( 
         <div 
             style={{
@@ -18,27 +19,25 @@ export default function App(props){
             pointerEvents: "none", }}
         >
             <StoreLoader>
-                <Button hasScrollBar/>
+                <Router/>
             </StoreLoader>
         </div>
     )
 }
 
+function Router({}){
+    let hasScrollBar = document.body.scrollHeight > window.innerHeight
+    const [menuActive, setMenuActive] = useFlowState("menuActive", false);
+
+    return (
+        <React.Fragment>
+            { !menuActive && <Button hasScrollBar onClick={() => setMenuActive(true)}/> }
+            { menuActive && <Menu hasScrollBar/> }
+        </React.Fragment>
+    )
+}
+
 function StoreLoader ( {children} ) {
-    // const [storeReady, setStoreReady] = useState(flowAPI.state.getState("loaded") || false);
-
-    // useEffect(() => {
-    //     let ready = flowAPI.state.getState("loaded") || false;
-
-    //     if (storeReady != ready ) setStoreReady(ready)
-    //     else {
-    //         flowAPI.state.addStateListener("loaded", (change, prev) => {
-    //             setStoreReady(change.loaded)
-    //             // flowAPI.state.removeListener("loaded", null, "storeLoadedListener" )
-    //         }, "storeLoadedListener")
-    //         // return () => flowAPI.state.removeListener("loaded", null, "storeLoadedListener")
-    //     }
-    // }, [])
     const [storeReady, setStoreReady] = useFlowState("loaded", false);
 
     useEffect(() => {

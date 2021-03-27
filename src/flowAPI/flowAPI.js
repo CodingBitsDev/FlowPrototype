@@ -4,11 +4,11 @@ import { addTrackingListener, removeTrackingListener } from "./tracking.js"
 import { findElementByString, highlightElementByString } from "./highlighting.js"
 import { initFlowActions } from "./flowActions.js"
 
-let flowApi;
+let flowAPI;
 
 let firebase = useFirebase().firebase;
 let state = useState();
-let flowActions = initFlowActions(flowApi);
+let flowActions = initFlowActions(state);
 flowAPI = {
     firebase: firebase,
     state: state,
@@ -18,7 +18,8 @@ flowAPI = {
     },
     highlighter: {
         highlightElementByString: highlightElementByString,
-    } 
+    }, 
+    actions: flowActions, 
 }
 
 export default flowAPI;

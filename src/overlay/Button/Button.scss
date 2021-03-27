@@ -1,0 +1,14 @@
+.flowButton{
+    position: absolute;
+    top: 20%;
+    width: 50px;
+    height: 50px;
+    background-color: blue;
+    pointer-events: auto;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+}

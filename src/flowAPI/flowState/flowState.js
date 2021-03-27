@@ -1,14 +1,15 @@
-import { saveSate } from "./saveState.js";
+import { saveState } from "./saveState.js";
 import { debounce } from 'lodash';
 import mergePersistandState from "./mergePersistantData.js";
 let flowState = {};
 
 let defaultState = {
+    menuActive: false,
     mainState: 0,
     currentStep: 0,  
     clickData: [],
     loaded: false,
-    savedSkills = {}
+    savedSkills: {},
 }
 
 let stateListeners = new Map()
@@ -27,7 +28,7 @@ function _initState(){
 
 function _saveState(newState){
     flowState = newState;
-    saveSate(flowState)
+    saveState(flowState)
 }
 
 function _updateState(){

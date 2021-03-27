@@ -6,18 +6,14 @@ let trackingState = {
     savedSkills: {},
 }
 
-function copyTrackingState (){
-    flowAPI.state.addStateListener("mainState", changeState => { trackingState.mainState = flowState.mainState || 0; });
-    flowAPI.state.addStateListener("clickData", changeState => { trackingState.clickData = flowState.clickData || []; });
-    flowAPI.state.addStateListener("currentStep", changeState => { trackingState.currentStep = flowState.currentStep || []; });
-    flowAPI.state.addStateListener("savedSkills", changeState => { trackingState.savedSkills = flowState.savedSkills || []}); 
+function copyTrackingStateChanges (flowState){
+    flowState.addStateListener("mainState", changeState => { trackingState.mainState = changeState.mainState || 0; });
+    flowState.addStateListener("clickData", changeState => { trackingState.clickData = changeState.clickData || []; });
+    flowState.addStateListener("currentStep", changeState => { trackingState.currentStep = changeState.currentStep || []; });
+    flowState.addStateListener("savedSkills", changeState => { trackingState.savedSkills = changeState.savedSkills || []}); 
 }
 
-export function initFlowActions(){
-    copyTrackingStateChanges();
-}
-
-export function leranNewSkill(){
+function leranNewSkill(){
     flowAPI.state.setState({ mainState: 1, clickData: [], currentStep: 0 });
     flowAPI.tracking.addListener((elem, elemString) => {
         let newStep = currentStep + 1;
@@ -27,13 +23,13 @@ export function leranNewSkill(){
     }, "learning")
 }
 
-export function endLearning(){
+function endLearning(){
     flowAPI.tracking.removeListener(null, "learning");
     let newSavedSkills = {...savedSkills, "testName": { clickData, location: location }}
     flowAPI.state.setState( {mainState: 0, newSavedSkills, clickData : [], currentStep: 0 });
 }
 
-export function teachSkill(skillID){
+function teachSkill(skillID){
     let skill = trackingState.savedSkills[skillID]
     if (!skill) return false;
     flowAPI.state.setState({ mainState: 2, clickData: skill.clickData, currentStep: 1 });
@@ -43,7 +39,7 @@ export function teachSkill(skillID){
     flowAPI.tracking.addListener((elem, elemString) => {
         if (!currentElement) {
             alert("Can't find object")
-            abortLearning()
+            abortTeaching()
         }
         let newStep = trackinState.currentStep + 1;
         if ( elemString == trackingState.clickData[trackingState.currentStep]  ){
@@ -57,7 +53,17 @@ export function teachSkill(skillID){
 
 }
 
-export function abortLearning(){
+function abortTeaching(){
     flowAPI.tracking.removeListener(null, "teaching");
     flowAPI.state.setState( {mainState: 0, clickData : [], currentStep: 0 });
+}
+
+export function initFlowActions(flowState){
+    copyTrackingStateChanges(flowState);
+    return {
+        leranNewSkill,
+        endLearning,
+        teachSkill,
+        abortTeaching,
+    }
 }
