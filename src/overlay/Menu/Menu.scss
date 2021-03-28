@@ -9,6 +9,8 @@
     pointer-events: auto;
     color: white;
     display: flex;
+    flex-direction: column;
+    align-items: center;
 
 
     .closeButton{
@@ -53,5 +55,16 @@
         font-size: 20px;
         display: flex;
         justify-content: center;
+    }
+
+    .skillButton{
+        width: 100%;
+        height: 25px;
+        background-color: darkblue;
+        color: yellow;
+        display: flex;
+        justify-content:center;
+        align-items: center;
+        cursor: pointer;
     }
 }

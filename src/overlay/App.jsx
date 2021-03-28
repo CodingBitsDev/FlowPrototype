@@ -28,21 +28,18 @@ export default function App(props){
 function Router({}){
     let hasScrollBar = document.body.scrollHeight > window.innerHeight
     const [menuActive, setMenuActive] = useFlowState("menuActive", false);
+    const [mainState, setMainState] = useFlowState("mainState", false);
 
     return (
         <React.Fragment>
-            { !menuActive && <Button hasScrollBar onClick={() => setMenuActive(true)}/> }
-            { menuActive && <Menu hasScrollBar/> }
+            { ( !menuActive || mainState ) && <Button hasScrollBar onClick={() => setMenuActive(true)}/> }
+            { ( menuActive && !mainState ) && <Menu hasScrollBar/> }
         </React.Fragment>
     )
 }
 
 function StoreLoader ( {children} ) {
     const [storeReady, setStoreReady] = useFlowState("loaded", false);
-
-    useEffect(() => {
-        console.log("###", storeReady);
-    }) 
 
     if (!storeReady){
         return null;

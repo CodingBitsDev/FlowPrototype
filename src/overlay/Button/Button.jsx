@@ -4,8 +4,16 @@ import useFlowState from "../hooks/useFlowState.js";
 import "./Button.scss"
 
 export default function ({onClick, hasScrollBar}){
+    const [mainState, setMainState] = useFlowState("mainState", 0);
+
     let buttonClick = (e) => {
-        onClick && onClick();
+        if( !mainState ){
+            onClick && onClick();
+        } else if (mainState == 1){
+            flowAPI.actions.endLearning();
+        } else if (mainState == 2) {
+            flowAPI.actions.abortTeaching();
+        }
     }
 
     return ( 
@@ -14,7 +22,7 @@ export default function ({onClick, hasScrollBar}){
             style={{ right: hasScrollBar ? "17px" : "0px", }}
             onClick={buttonClick}
         >
-          Start
+          {!mainState ? "Start" : "Tracking" }
         </div>
     )
 }
