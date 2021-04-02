@@ -6,7 +6,7 @@ import { initOverlay } from "./overlay/overlay.js";
 
 (function(){
     initOverlay();
-    highlightClickedElement();
+    // highlightClickedElement();
 })();
 
 function highlightClickedElement(){
