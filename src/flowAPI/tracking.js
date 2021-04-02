@@ -29,8 +29,9 @@ export function initTracking(ignoredElements){
         if (e && e.path) clickedElement = e.path[0];
         else if (e.originalTarget) clickedElement = e.originalTarget
         if (clickedElement && !checkIfIgnored(clickedElement)){
+            let elementString = clickedElement.outerHTML
             trackingListeners.forEach( ( {cb} ) => {
-                let result = cb(clickedElement, clickedElement.outerHTML);
+                let result = cb(clickedElement, elementString);
                 if (result == true){
                     preventClick == true;
                 }

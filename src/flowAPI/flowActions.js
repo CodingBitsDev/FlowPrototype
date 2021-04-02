@@ -6,6 +6,7 @@ let trackingState = {
     clickData: [],  
     currentStep: 0,
     savedSkills: {},
+    startLocation: "",
 }
 
 let runOnDomReady = () => {}
@@ -16,10 +17,11 @@ $( document ).ready(function() {
 });
 
 function copyTrackingStateChanges (flowState){
-    flowState.addStateListener("mainState", changeState => { trackingState.mainState = changeState.mainState || 0; });
-    flowState.addStateListener("clickData", changeState => { trackingState.clickData = changeState.clickData || []; });
-    flowState.addStateListener("currentStep", changeState => { trackingState.currentStep = changeState.currentStep || []; });
+    flowState.addStateListener("mainState", changeState => { trackingState.mainState = changeState.mainState || 0});
+    flowState.addStateListener("clickData", changeState => { trackingState.clickData = changeState.clickData || []});
+    flowState.addStateListener("currentStep", changeState => { trackingState.currentStep = changeState.currentStep || []});
     flowState.addStateListener("savedSkills", changeState => { trackingState.savedSkills = changeState.savedSkills || []}); 
+    flowState.addStateListener("startLocation", changeState => { trackingState.startLocation = changeState.startLocation || ""}); 
 
     flowState.addStateListener("loaded", ( changeState, flowState ) => {
         let currentState = {...flowState, ...changeState}
@@ -39,6 +41,7 @@ function checkIfStateActive(currentState){
         clickData: currentState.clickData,
         currentStep: currentState.currentStep,
         savedSkills: currentState.savedSkills,
+        startLocation: currentState.startLocation,
     }
     if ( currentState.mainState == 1 ){
         learnNewSkill(true);
@@ -49,7 +52,7 @@ function checkIfStateActive(currentState){
 
 function learnNewSkill(active = false){
     if (!active){
-        flowAPI.state.setState({ mainState: 1, clickData: [], currentStep: 0 });
+        flowAPI.state.setState({ mainState: 1, clickData: [], currentStep: 0, startLocation: window.location.href });
     }
     flowAPI.tracking.addListener((elem, elemString) => {
         let newStep = trackingState.currentStep + 1;
@@ -60,7 +63,7 @@ function learnNewSkill(active = false){
 
 function endLearning(){
     flowAPI.tracking.removeListener(null, "learning");
-    let newSavedSkills = {...trackingState.savedSkills, "testName": { clickData: trackingState.clickData, location: window.location.href }}
+    let newSavedSkills = {...trackingState.savedSkills, "testName": { clickData: trackingState.clickData, location: trackingState.startLocation }}
     flowAPI.state.setState( {mainState: 0, savedSkills: newSavedSkills, clickData : [], currentStep: 0 });
 }
 
@@ -69,11 +72,11 @@ function teachSkill(skillID, active = false){
     if (!active){
         let skill = trackingState.savedSkills[skillID]
         if (!skill) return false;
-        flowAPI.state.setState({ mainState: 2, clickData: skill.clickData, currentStep: 1 });
+        // currentElement = flowAPI.highlighter.highlightElementByString( skill.clickData[0] );
+        flowAPI.state.setState({ mainState: 2, clickData: skill.clickData, currentStep: 0 });
+        alert(skill.location)
         window.location.replace( skill.location );
-        currentElement = flowAPI.highlighter.highlightElementByString( skill.clickData[0] );
     } else {
-        console.log("elem", trackingState.clickData[trackingState.currentStep])
         currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[trackingState.currentStep] );
     }
     flowAPI.tracking.addListener((elem, elemString) => {
@@ -82,7 +85,8 @@ function teachSkill(skillID, active = false){
             abortTeaching()
         }
         let newStep = trackingState.currentStep + 1;
-        if ( elemString == trackingState.clickData[trackingState.currentStep]  ){
+        if ( elem == currentElement ){
+            if ( !trackingState.clickData[newStep] ) return abortTeaching();
             flowAPI.state.setState({ currentStep: newStep });
             currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[newStep] );
         } else {
@@ -90,7 +94,6 @@ function teachSkill(skillID, active = false){
             return false; //Prevent Click
         }
     }, "teaching")
-
 }
 
 function abortTeaching(){

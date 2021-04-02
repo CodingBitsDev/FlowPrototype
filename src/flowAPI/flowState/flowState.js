@@ -6,6 +6,7 @@ let flowState = {};
 let defaultState = {
     menuActive: false,
     mainState: 0,
+    startLocation: "",  
     currentStep: 0,  
     clickData: [],
     loaded: false,
@@ -50,6 +51,7 @@ function _updateState(){
         }
         traverseKeys(stateData);
         //Update to new state
+        console.log("####", stateData)
         _saveState({...flowState, ...stateData});
     }
     queueActive = false;
