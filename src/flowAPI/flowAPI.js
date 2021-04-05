@@ -1,7 +1,7 @@
 import { useFirebase } from "./firebase.js"
 import {useState} from "./flowState/flowState.js"
 import { addTrackingListener, removeTrackingListener, initTracking } from "./tracking.js"
-import { findElementByString, highlightElementByString } from "./highlighting.js"
+import { findElementByString, highlightElementByString, removeAllHighlighting } from "./highlighting.js"
 import { initFlowActions } from "./flowActions.js"
 
 let flowAPI;
@@ -19,6 +19,7 @@ flowAPI = {
     },
     highlighter: {
         highlightElementByString: highlightElementByString,
+        removeAllHighlighting: removeAllHighlighting,
     }, 
     actions: flowActions, 
 }

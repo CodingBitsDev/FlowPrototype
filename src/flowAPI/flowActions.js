@@ -74,7 +74,6 @@ function teachSkill(skillID, active = false){
         if (!skill) return false;
         // currentElement = flowAPI.highlighter.highlightElementByString( skill.clickData[0] );
         flowAPI.state.setState({ mainState: 2, clickData: skill.clickData, currentStep: 0 });
-        alert(skill.location)
         window.location.replace( skill.location );
     } else {
         currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[trackingState.currentStep] );
@@ -98,6 +97,7 @@ function teachSkill(skillID, active = false){
 
 function abortTeaching(){
     flowAPI.tracking.removeListener(null, "teaching");
+    flowAPI.highlighter.removeAllHighlighting();
     flowAPI.state.setState( {mainState: 0, clickData : [], currentStep: 0 });
 }
 

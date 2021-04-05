@@ -8,12 +8,12 @@ export default function ({hasScrollBar}){
     const [ savedSkills ] = useFlowState("savedSkills", false);
 
     let newLessonClicked = () => {
-        alert("recoding Lesson")
+        // alert("recoding Lesson")
         flowAPI.actions.learnNewSkill();
     }
 
     let teachSkill = (key) => {
-        alert("Teaching Skill: " + key)
+        // alert("Teaching Skill: " + key)
         flowAPI.actions.teachSkill(key)
     }
 
