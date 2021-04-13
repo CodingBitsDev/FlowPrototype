@@ -9,6 +9,12 @@ let trackingState = {
     startLocation: "",
 }
 
+const config = { attributes: true, childList: true, subtree: true };
+let onDomChange = (mutationsList, observer) => {}
+const domMutationObserver = new MutationObserver((...args) => {onDomChange(args)});
+// Callback function to execute when mutations are observed
+
+
 let runOnDomReady = () => {}
 let domReady = false;
 $( document ).ready(function() {
@@ -80,7 +86,6 @@ function teachSkill(skillID, active = false){
     }
     flowAPI.tracking.addListener((elem, elemString) => {
         if (!currentElement) {
-            alert("Can't find object")
             abortTeaching()
         }
         let newStep = trackingState.currentStep + 1;
@@ -88,6 +93,14 @@ function teachSkill(skillID, active = false){
             if ( !trackingState.clickData[newStep] ) return abortTeaching();
             flowAPI.state.setState({ currentStep: newStep });
             currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[newStep] );
+            if (!currentElement){
+                onDomChange = (mutationsList, observer) => {
+                    currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[newStep] );
+                    if (currentElement){ domMutationObserver.disconnect()}
+                    console.log("###Listen")
+                }
+                domMutationObserver.observe(document.body, config)
+            }
         } else {
             alert("Wrong Step")
             return false; //Prevent Click
