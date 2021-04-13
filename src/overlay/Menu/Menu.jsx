@@ -14,7 +14,7 @@ export default function ({hasScrollBar}){
 
     let teachSkill = (key) => {
         // alert("Teaching Skill: " + key)
-        flowAPI.actions.teachSkill(key)
+        flowAPI.actions.teachSkill(key, false, true)
     }
 
     return (

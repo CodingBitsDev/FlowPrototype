@@ -7,6 +7,7 @@ let trackingState = {
     currentStep: 0,
     savedSkills: {},
     startLocation: "",
+    shouldClick: false,
 }
 
 const config = { attributes: true, childList: true, subtree: true };
@@ -28,6 +29,7 @@ function copyTrackingStateChanges (flowState){
     flowState.addStateListener("currentStep", changeState => { trackingState.currentStep = changeState.currentStep || []});
     flowState.addStateListener("savedSkills", changeState => { trackingState.savedSkills = changeState.savedSkills || []}); 
     flowState.addStateListener("startLocation", changeState => { trackingState.startLocation = changeState.startLocation || ""}); 
+    flowState.addStateListener("shouldClick", changeState => { trackingState.shouldClick = changeState.shouldClick || false}); 
 
     flowState.addStateListener("loaded", ( changeState, flowState ) => {
         let currentState = {...flowState, ...changeState}
@@ -48,6 +50,7 @@ function checkIfStateActive(currentState){
         currentStep: currentState.currentStep,
         savedSkills: currentState.savedSkills,
         startLocation: currentState.startLocation,
+        shouldClick: currentState.shouldClick,
     }
     if ( currentState.mainState == 1 ){
         learnNewSkill(true);
@@ -73,13 +76,13 @@ function endLearning(){
     flowAPI.state.setState( {mainState: 0, savedSkills: newSavedSkills, clickData : [], currentStep: 0 });
 }
 
-function teachSkill(skillID, active = false){
+function teachSkill(skillID, active = false, shouldClick = false){
     let currentElement;
     if (!active){
         let skill = trackingState.savedSkills[skillID]
         if (!skill) return false;
         // currentElement = flowAPI.highlighter.highlightElementByString( skill.clickData[0] );
-        flowAPI.state.setState({ mainState: 2, clickData: skill.clickData, currentStep: 0 });
+        flowAPI.state.setState({ mainState: 2, clickData: skill.clickData, currentStep: 0, shouldClick: shouldClick});
         window.location.replace( skill.location );
     } else {
         currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[trackingState.currentStep] );
@@ -96,22 +99,35 @@ function teachSkill(skillID, active = false){
             if (!currentElement){
                 onDomChange = (mutationsList, observer) => {
                     currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[newStep] );
-                    if (currentElement){ domMutationObserver.disconnect()}
+                    if (currentElement){
+                        domMutationObserver.disconnect()
+                        if (shouldClick || trackingState.shouldClick){ 
+                            currentElement && currentElement.dispatchEvent(new Event('click'));
+                        }
+                    }
                     console.log("###Listen")
                 }
                 domMutationObserver.observe(document.body, config)
+            }else {
+                if (shouldClick || trackingState.shouldClick){ 
+                    currentElement && currentElement.dispatchEvent(new Event('click'));
+                }
             }
         } else {
             alert("Wrong Step")
             return false; //Prevent Click
         }
     }, "teaching")
+    console.log(shouldClick, trackingState.shouldClick)
+    if (shouldClick || trackingState.shouldClick){ 
+        currentElement && currentElement.dispatchEvent(new Event('click'));
+    }
 }
 
 function abortTeaching(){
     flowAPI.tracking.removeListener(null, "teaching");
     flowAPI.highlighter.removeAllHighlighting();
-    flowAPI.state.setState( {mainState: 0, clickData : [], currentStep: 0 });
+    flowAPI.state.setState( {mainState: 0, clickData : [], currentStep: 0, shouldClick: false });
 }
 
 export function initFlowActions(flowState){

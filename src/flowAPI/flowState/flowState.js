@@ -11,6 +11,7 @@ let defaultState = {
     clickData: [],
     loaded: false,
     savedSkills: {},
+    shouldClick: false,
 }
 
 let stateListeners = new Map()
