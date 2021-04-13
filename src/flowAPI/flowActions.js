@@ -15,6 +15,15 @@ let onDomChange = (mutationsList, observer) => {}
 const domMutationObserver = new MutationObserver((...args) => {onDomChange(args)});
 // Callback function to execute when mutations are observed
 
+let clickElement = (element) => {
+    if (element){
+        setTimeout(() =>{
+            element.dispatchEvent(new MouseEvent("click",{bubbles: true, cancellable: true}));
+        }, 0);
+    }
+
+}
+
 
 let runOnDomReady = () => {}
 let domReady = false;
@@ -102,15 +111,14 @@ function teachSkill(skillID, active = false, shouldClick = false){
                     if (currentElement){
                         domMutationObserver.disconnect()
                         if (shouldClick || trackingState.shouldClick){ 
-                            currentElement && currentElement.dispatchEvent(new Event('click'));
+                            clickElement(currentElement);
                         }
                     }
-                    console.log("###Listen")
                 }
                 domMutationObserver.observe(document.body, config)
             }else {
                 if (shouldClick || trackingState.shouldClick){ 
-                    currentElement && currentElement.dispatchEvent(new Event('click'));
+                    clickElement(currentElement);
                 }
             }
         } else {
@@ -118,9 +126,19 @@ function teachSkill(skillID, active = false, shouldClick = false){
             return false; //Prevent Click
         }
     }, "teaching")
-    console.log(shouldClick, trackingState.shouldClick)
-    if (shouldClick || trackingState.shouldClick){ 
-        currentElement && currentElement.dispatchEvent(new Event('click'));
+    if (!currentElement){
+        onDomChange = (mutationsList, observer) => {
+            currentElement = flowAPI.highlighter.highlightElementByString( trackingState.clickData[trackingState.currentStep + 1] );
+            if (currentElement){
+                domMutationObserver.disconnect()
+                if (shouldClick || trackingState.shouldClick){ 
+                    clickElement(currentElement);
+                }
+            }
+        }
+        domMutationObserver.observe(document.body, config)
+    } else if (shouldClick || trackingState.shouldClick){ 
+        clickElement(currentElement);
     }
 }
 
